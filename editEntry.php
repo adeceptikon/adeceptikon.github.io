@@ -1,78 +1,99 @@
 <?php session_start();
 ?>
 <!DOCTYPE html>
+<html>
 <meta charset="UTF-8" >
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <head>
-<style>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
         textarea{
-            min-height: 300px;
-            width: 90%;
-            outline: none;
-            
+            width: 100%;
+            height:30rem;
         }
-        }#answer{
-            min-height: 300px;
-            width: 90%;
-            outline: none;
-            
+        #sawaal{
+            height:3rem;
+            border: 1px solid rgb(20 , 30 ,140);
+
+            border-radius: 5pt;
         }
-        #question{
-            min-height: 100px;
-            width: 80%;
-            outline: none;
-            
-        }
-        input{
-           width: 90%;
-        }
-        #search{
-            width: 50%;
+        #jawaab{
+            border: 1px solid rgb(20 , 130 ,40);
+            border-radius: 5pt;
+
         }
     </style>
-
 </head>
 
 <body>
 
-<?php include_once("./top.php");
-    $filename = $_GET['q'];
-    // echo $filename;
-    $f = simplexml_load_file( $filename);
-    $question  = $f->question;
-    $answer = $f->answer;
-    $location = $f->location;
-    $tags = $f->tags;
-    $user = $f->user;
-    $context = $f->context;
-?>
-    <form method="POST" action="processEntry.php">
-    <h2>यहां सवाल / जवाब अपने हिसाब से एडिट कीजीये</h2>
+    <div class="container-fluid" >
+    <?php include_once("./top.php"); ?>
 
-    <label for="question">सवाल (question) *</label><br />
-    <textarea type="text" name="question"  id="question"><?php echo $question; ?></textarea><br /><br />
-    <?php echo "<a href='deleteEntry.php?q=$filename'><button>डिलीट</button></a><br /><br />" ?>
+        <div class="row">
+            <div class="col-sm-2">
 
-    <label for="context">विवरण (context) </label><br />
-    <input type="text" name="context" value="<?php echo $context; ?>" /><br /><br />
+            </div>
+            <div class="col-sm-8">
+                <?php
+                    $filename =$_GET['q']; //dangerous
+                    // echo $filename;
+                    $str = file_get_contents( $filename);
+                    $f = json_decode($str);
+                    $question  = $f->question;
+                    $answer = $f->answer;
+                    $location = $f->location;
+                    $tags = $f->tags;
+                    $user = $f->user;
+                    $context = $f->context;
+                ?>
+                    <form method="POST" action="processEntry.php?editable=1&q=<?php echo $filename?>">
+                    <h2>यहां सवाल / जवाब अपने हिसाब से एडिट कीजीये</h2>
 
-    <label for="tags">फील्ड (tags) </label><br />
-    <input type="text" name="tags" value="<?php echo $tags; ?> " /><br /><br />
+                    <label for="question">सवाल (question) (non -mutable) </label><br />
+                    <textarea id="sawaal" type="text" name="question"  id="question"><?php echo $question; ?></textarea><br /><br />
+                    <?php //echo "<a href='deleteEntry.php?q=$received_file_index'>डिलीट</a><br /><br />" ?>
 
+                    <label for="answer">जवाब(Answer) *</label><br />
+                    <textarea id="jawaab" value="जवाब" name="answer" id="answer"><?php echo $answer; ?></textarea><br /><br />
+                    
+                    <button type="submit" name="submit">हो गया</button><br /><br />
 
+                    <label for="context">विवरण (context) </label><br />
+                    <input type="text" name="context" value="<?php echo $context; ?>" /><br /><br />
 
-    <label for="answer">जवाब(Answer) *</label><br />
-    <textarea value="जवाब" name="answer" id="answer"><?php echo $answer; ?></textarea><br /><br />
-
-    <label for="user">User * </label><br />
-    <input  name="user"  value="<?php echo $_SESSION['username']; ?>" /><br /><br />
-
-    <label for="location">पता * </label><br />
-    <input  name="location" value="<?php echo $location; ?>" /><br /><br />
-
-
-    
-    <button type="submit" name="submit">हो गया</button><br /><br />
-</form>
+                    <label for="tags">फील्ड (tags) </label><br />
+                    <input type="text" name="tags" value="<?php echo $tags; ?> " /><br /><br />
 
 
+
+                    
+                    <label for="user">User * </label><br />
+                    <input  name="user"  value="<?php if(isset($_SESSION['username'])) echo $_SESSION['username']; ?>" /><br /><br />
+
+                    <label for="location">पता * </label><br />
+                    <input  name="location" value="<?php echo $location; ?>" /><br /><br />
+
+
+                    
+                </form>
+            </div>
+            <div class="col-sm-2">
+                
+            </div>
+        </div>
+
+
+    </div>
 </body>
+</html>
